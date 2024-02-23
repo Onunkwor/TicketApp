@@ -1,17 +1,27 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const MONGODB_URI= process.env.MONGODB_URI
-let cached = (global as any ).mongoose || {connection: null, promise: null}
+const MONGODB_URI = process.env.MONGODB_URI;
+
+let cached = (global as any).mongoose || { conn: null, promise: null };
 
 export const connectToDatabase = async () => {
-    if (cached.connection) return cached.connection
+  if (cached.conn) return cached.conn;
 
-    if(!MONGODB_URI) throw new Error("Mongodb uri is missing")
+  if (!MONGODB_URI) throw new Error("MONGODB_URI is missing");
 
-    cached.promise = cached.promise || mongoose.connect(MONGODB_URI, {
-        dbName: 'Evently',
-        bufferCommands: false
-    })
-    cached.connection = await cached.promise
-    return cached.connection
-}
+  cached.promise =
+    cached.promise ||
+    mongoose.connect(MONGODB_URI, {
+      dbName: "evently",
+      bufferCommands: false,
+    });
+
+  try {
+    cached.conn = await cached.promise;
+    console.log(`Connected to MongoDB at ${MONGODB_URI}`);
+    return cached.conn;
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    throw error; // Throw the error for handling by the caller
+  }
+};
