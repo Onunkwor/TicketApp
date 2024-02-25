@@ -27,16 +27,26 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { Router } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createEvent } from "@/lib/actions/event.actions";
+import { IEvent } from "@/lib/database/models/event.model";
 
 type EventFormProps = {
   userId: string;
   type: "Create" | "Update";
+  event?: IEvent;
+  eventId?: string;
 };
-const EventForm = ({ userId, type }: EventFormProps) => {
+const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
-  const initialValues = eventDefaultValues;
+  const initialValues =
+    event && type === "Update"
+      ? {
+          ...event,
+          startDateTime: new Date(event.startDateTime),
+          endDateTime: new Date(event.endDateTime),
+        }
+      : eventDefaultValues;
   const { startUpload } = useUploadThing("imageUploader");
-  const Router = useRouter()
+  const Router = useRouter();
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: initialValues,
@@ -48,22 +58,21 @@ const EventForm = ({ userId, type }: EventFormProps) => {
     if (files.length > 0) {
       const uploadedImage = await startUpload(files);
       if (!uploadedImage) return;
-      uploadedImageUrl = uploadedImage[0].url
+      uploadedImageUrl = uploadedImage[0].url;
     }
     if (type === "Create") {
       try {
         const newEvent = await createEvent({
-          event: {...values, imageUrl: uploadedImageUrl},
+          event: { ...values, imageUrl: uploadedImageUrl },
           userId,
-          path: '/profile'
-        })
-        if(newEvent){
+          path: "/profile",
+        });
+        if (newEvent) {
           form.reset();
-          Router.push(`/events/${newEvent._id}`)
+          Router.push(`/events/${newEvent._id}`);
         }
       } catch (error) {
         console.log("Error adding event", error);
-        
       }
     }
   }
