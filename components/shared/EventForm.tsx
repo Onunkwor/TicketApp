@@ -24,9 +24,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUploadThing } from "@/lib/uploadthing";
-import { Router } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { createEvent } from "@/lib/actions/event.actions";
+import { createEvent, updateEvent } from "@/lib/actions/event.actions";
 import { IEvent } from "@/lib/database/models/event.model";
 
 type EventFormProps = {
@@ -55,21 +54,52 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     const eventData = values;
     let uploadedImageUrl = values.imageUrl;
+    let uploadedImageKey = "";
     if (files.length > 0) {
       const uploadedImage = await startUpload(files);
       if (!uploadedImage) return;
       uploadedImageUrl = uploadedImage[0].url;
+      uploadedImageKey = uploadedImage[0].name;
     }
     if (type === "Create") {
       try {
         const newEvent = await createEvent({
-          event: { ...values, imageUrl: uploadedImageUrl },
+          event: {
+            ...values,
+            imageUrl: uploadedImageUrl,
+            uploadThingId: uploadedImageKey,
+          },
           userId,
           path: "/profile",
         });
         if (newEvent) {
           form.reset();
           Router.push(`/events/${newEvent._id}`);
+        }
+      } catch (error) {
+        console.log("Error adding event", error);
+      }
+    }
+    if (type === "Update") {
+      if (!eventId) {
+        Router.back();
+        return;
+      }
+
+      try {
+        const updatedEvent = await updateEvent({
+          userId,
+          event: {
+            ...values,
+            imageUrl: uploadedImageUrl,
+            _id: eventId,
+            uploadThingId: uploadedImageKey,
+          },
+          path: `/events/${eventId}`,
+        });
+        if (updatedEvent) {
+          form.reset();
+          Router.push(`/events/${updatedEvent._id}`);
         }
       } catch (error) {
         console.log("Error adding event", error);

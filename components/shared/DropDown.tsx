@@ -13,13 +13,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 
 import { ICategory } from "@/lib/database/models/category.model";
 import { startTransition, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { createCategory, getAllCategories } from "@/lib/actions/category.actions";
+import {
+  createCategory,
+  getAllCategories,
+} from "@/lib/actions/category.actions";
 
 type DropDownProps = {
   onChange: () => void;
@@ -29,19 +33,19 @@ const DropDown = ({ onChange, value }: DropDownProps) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [newCategory, setNewCategory] = useState("");
   const handleAddCategory = () => {
-     createCategory({
-        categoryName: newCategory.trim()
-     }).then((category) =>{
-        setCategories((prevState) => [...prevState,category])
-     })
+    createCategory({
+      categoryName: newCategory.trim(),
+    }).then((category) => {
+      setCategories((prevState) => [...prevState, category]);
+    });
   };
-  useEffect(()=>{
+  useEffect(() => {
     const getCategories = async () => {
-      const categoryList = await getAllCategories(); 
-      categoryList && setCategories(categoryList as ICategory[]); 
-    }
-    getCategories()
-  },[])
+      const categoryList = await getAllCategories();
+      categoryList && setCategories(categoryList as ICategory[]);
+    };
+    getCategories();
+  }, []);
   return (
     <Select onValueChange={onChange} defaultValue={value}>
       <SelectTrigger className="select-field">
@@ -75,12 +79,14 @@ const DropDown = ({ onChange, value }: DropDownProps) => {
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button
-                type="submit"
-                onClick={() => startTransition(handleAddCategory)}
-              >
-                Add
-              </Button>
+              <DialogClose>
+                <Button
+                  type="submit"
+                  onClick={() => startTransition(handleAddCategory)}
+                >
+                  Add
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>

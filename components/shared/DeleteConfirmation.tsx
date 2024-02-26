@@ -20,7 +20,13 @@ import {
 import { deleteEvent } from "@/lib/actions/event.actions";
 import { Button } from "../ui/button";
 
-export const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
+export const DeleteConfirmation = ({
+  eventId,
+  uploadThingId,
+}: {
+  eventId: string;
+  uploadThingId: string;
+}) => {
   const pathname = usePathname();
   let [isPending, startTransition] = useTransition();
 
