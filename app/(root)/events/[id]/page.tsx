@@ -18,6 +18,7 @@ const EventDetails = async ({
     eventId: event._id,
     page: searchParams.page as string,
   });
+  const page = Number(searchParams?.page) || 1;
   // console.log(event);
 
   return (
@@ -96,8 +97,8 @@ const EventDetails = async ({
           emptyStateSubtext="Come back later"
           collectionType="All_Events"
           limit={6}
-          page={1}
-          totalPages={2}
+          page={page}
+          totalPages={relatedEvents?.totalPages}
         />
       </section>
     </>
