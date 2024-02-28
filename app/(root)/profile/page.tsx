@@ -1,5 +1,5 @@
 import Collection from "@/components/shared/Collection";
-import Loader from "@/components/shared/Loader";
+import Loader from "@/app/(root)/loading";
 import { Button } from "@/components/ui/button";
 import { getEventsByUser } from "@/lib/actions/event.actions";
 import { getOrdersByUser } from "@/lib/actions/order.actions";
