@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import qs from "query-string";
 
 import { UrlQueryParams, RemoveUrlQueryParams } from "@/types";
-
+//shad cn
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -68,6 +68,7 @@ export const formatPrice = (price: string) => {
 
 export function formUrlQuery({ params, key, value }: UrlQueryParams) {
   const currentUrl = qs.parse(params);
+  console.log(currentUrl);
 
   currentUrl[key] = value;
 
