@@ -14,7 +14,7 @@ const MobileNav = () => {
   return (
     <nav className="md:hidden">
       <Sheet>
-        <SheetTrigger className="">
+        <SheetTrigger>
           <Image
             src="/assets/icons/menu.svg"
             width={24}
@@ -30,7 +30,7 @@ const MobileNav = () => {
             height={38}
             alt="logo"
           />
-          <Separator className="boeder border-gray-50" />
+          <Separator className="border border-gray-50" />
           <NavItems />
         </SheetContent>
       </Sheet>
